@@ -1,0 +1,32 @@
+from midiutil import MIDIFile
+
+# Створення MIDI-файлу
+midi = MIDIFile(1)  
+track = 0  
+time = 0  
+midi.addTempo(track, time, 120)  # Встановлення темпу (120 BPM)
+
+# Базовий ритм (16 нот)
+base_rhythm = [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1]
+
+# Подовжений патерн з варіаціями (4 цикли)
+extended_rhythm = base_rhythm * 4  
+variations = [0 if (i % 6 == 0 and note == 1) else note for i, note in enumerate(extended_rhythm)]
+
+# Ноти ударних
+kick_note = 36  # Бас-бочка (C2)
+snare_note = 38  # Снейр (D2)
+duration = 0.25  # 1/16 ноти
+
+# Додавання нот у MIDI-файл
+for i, step in enumerate(variations):
+    if step == 1:
+        note = kick_note if i % 2 == 0 else snare_note  # Чередування кіка і снейра
+        midi.addNote(track, channel=9, pitch=note, time=i * duration, duration=duration, volume=100)
+
+# Збереження MIDI-файлу
+file_path = "custom_rhythm_pattern.mid"
+with open(file_path, "wb") as output_file:
+    midi.writeFile(output_file)
+
+print(f"MIDI-файл успішно збережено: {file_path}")
